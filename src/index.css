@@ -1,0 +1,290 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Cinzel:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 30 15% 5%;
+    --foreground: 40 30% 92%;
+
+    --card: 30 20% 8%;
+    --card-foreground: 40 30% 92%;
+
+    --popover: 30 20% 8%;
+    --popover-foreground: 40 30% 92%;
+
+    --primary: 40 60% 55%;
+    --primary-foreground: 30 15% 5%;
+
+    --secondary: 30 30% 35%;
+    --secondary-foreground: 40 30% 92%;
+
+    --muted: 30 20% 15%;
+    --muted-foreground: 40 20% 55%;
+
+    --accent: 40 70% 50%;
+    --accent-foreground: 30 15% 5%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 40 30% 20%;
+    --input: 30 20% 15%;
+    --ring: 40 60% 55%;
+
+    --radius: 0.25rem;
+
+    /* Premium colors for the menu */
+    --gold-light: 42 80% 60%;
+    --gold: 40 70% 50%;
+    --gold-dark: 38 60% 40%;
+    --champagne: 40 40% 75%;
+    --bronze: 30 50% 40%;
+    --cream: 40 30% 90%;
+    --espresso: 30 30% 12%;
+    --charcoal: 30 20% 8%;
+
+    /* Elegant gradients */
+    --gradient-gold: linear-gradient(135deg, hsl(var(--gold-light)), hsl(var(--gold)), hsl(var(--gold-dark)));
+    --gradient-champagne: linear-gradient(180deg, hsl(var(--champagne) / 0.1), transparent);
+    --gradient-warm: linear-gradient(180deg, hsl(var(--espresso)), hsl(var(--charcoal)));
+
+    /* Subtle shadows */
+    --shadow-gold: 0 4px 20px hsl(var(--gold) / 0.15);
+    --shadow-warm: 0 8px 30px hsl(var(--background) / 0.8);
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 30 15% 5%;
+    --foreground: 40 30% 92%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Cormorant Garamond', serif;
+  }
+
+  h1,
+  h2,
+  h3,
+  .heading {
+    font-family: 'Cinzel', serif;
+    letter-spacing: 0.15em;
+  }
+
+  .menu-title {
+    font-family: 'Cinzel', serif;
+  }
+
+  .body-text {
+    font-family: 'Montserrat', sans-serif;
+  }
+}
+
+@layer utilities {
+
+  /* Elegant gold text effects */
+  .text-shimmer {
+    background: linear-gradient(90deg, hsl(var(--gold-dark)), hsl(var(--gold-light)), hsl(var(--gold)));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .text-glow-gold {
+    text-shadow: 0 0 20px hsl(var(--gold) / 0.4), 0 0 40px hsl(var(--gold) / 0.2);
+  }
+
+  /* Legacy glow classes for compatibility */
+  .text-glow-cyan {
+    text-shadow: 0 0 10px hsl(var(--gold) / 0.6), 0 0 20px hsl(var(--gold) / 0.4);
+  }
+
+  .text-glow-magenta {
+    text-shadow: 0 0 10px hsl(var(--gold) / 0.6), 0 0 20px hsl(var(--gold) / 0.4);
+  }
+
+  .border-glow-cyan {
+    box-shadow: 0 0 10px hsl(var(--gold) / 0.3), inset 0 0 10px hsl(var(--gold) / 0.05);
+  }
+
+  .gradient-text {
+    background: var(--gradient-gold);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .gradient-text-gold {
+    background: var(--gradient-gold);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Premium border styles */
+  .border-elegant {
+    border: 1px solid hsl(var(--gold) / 0.3);
+    box-shadow:
+      inset 0 0 0 1px hsl(var(--gold) / 0.1),
+      0 4px 20px hsl(var(--background) / 0.5);
+  }
+
+  .border-ornate {
+    position: relative;
+    border: 2px solid hsl(var(--gold) / 0.4);
+  }
+
+  .border-ornate::before {
+    content: '';
+    position: absolute;
+    inset: 3px;
+    border: 1px solid hsl(var(--gold) / 0.2);
+    pointer-events: none;
+  }
+
+  /* Decorative patterns */
+  .pattern-dots {
+    background-image: radial-gradient(circle, hsl(var(--gold) / 0.1) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+
+  .pattern-lines {
+    background-image:
+      linear-gradient(90deg, hsl(var(--gold) / 0.05) 1px, transparent 1px),
+      linear-gradient(hsl(var(--gold) / 0.05) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  /* Animations */
+  .animate-pulse-glow {
+    animation: pulse-glow 3s ease-in-out infinite;
+  }
+
+  @keyframes pulse-glow {
+
+    0%,
+    100% {
+      opacity: 1;
+    }
+
+    50% {
+      opacity: 0.85;
+    }
+  }
+
+  .animate-slide-up {
+    animation: slide-up 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+
+  @keyframes slide-up {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.6s ease-out forwards;
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  /* Print styles */
+  @media print {
+    .no-print {
+      display: none !important;
+    }
+
+    body {
+      background: white !important;
+      color: black !important;
+    }
+
+    .print-border {
+      border: 2px solid #b8860b !important;
+      padding: 1rem !important;
+    }
+  }
+
+  /* Neon glow header */
+  .header-neon {
+    font-family: 'Cinzel', serif;
+    font-size: 2.5rem;
+    color: hsl(var(--gold));
+    text-shadow:
+      0 0 5px hsl(var(--gold) / 0.8),
+      0 0 10px hsl(var(--gold) / 0.6),
+      0 0 20px hsl(var(--gold) / 0.4);
+    animation: neon-pulse 2s ease-in-out infinite;
+  }
+
+  /* Holographic gradient divider */
+  .divider-holo {
+    height: 2px;
+    margin: 1rem 0;
+    background: var(--gradient-gold);
+    opacity: 0.7;
+  }
+
+  /* Veg / Non-veg indicators */
+  .veg-indicator::before,
+  .nonveg-indicator::before {
+    display: inline-block;
+    margin-right: 0.3rem;
+    font-weight: bold;
+  }
+
+  .veg-indicator::before {
+    content: "🌱";
+    color: hsl(120, 70%, 50%);
+  }
+
+  .nonveg-indicator::before {
+    content: "🥩";
+    color: hsl(0, 70%, 50%);
+  }
+
+  /* Neon pulse animation */
+  @keyframes neon-pulse {
+
+    0%,
+    100% {
+      text-shadow: 0 0 5px hsl(var(--gold) / 0.8), 0 0 10px hsl(var(--gold) / 0.6), 0 0 20px hsl(var(--gold) / 0.4);
+    }
+
+    50% {
+      text-shadow: 0 0 10px hsl(var(--gold) / 1), 0 0 20px hsl(var(--gold) / 0.8), 0 0 30px hsl(var(--gold) / 0.6);
+    }
+  }
+}
