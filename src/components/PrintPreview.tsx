@@ -375,7 +375,8 @@ const PrintablePage = ({
   totalPages,
   isCover = false,
   isBackCover = false,
-  proverb
+  proverb,
+  twoColumn = false
 }: {
   section: MenuSectionType;
   pageRef: React.RefObject<HTMLDivElement>;
@@ -385,6 +386,7 @@ const PrintablePage = ({
   isCover?: boolean;
   isBackCover?: boolean;
   proverb?: string;
+  twoColumn?: boolean;
 }) => {
   const accentColor = variant === "cyan" ? "#00f0ff" : variant === "magenta" ? "#ff00ff" : "#ffd700";
 
@@ -595,7 +597,7 @@ const PrintablePage = ({
 
       {/* Content Area - Expanded for A4 */}
       <div className="flex-1 px-12 pb-6 overflow-hidden">
-        <div className="max-w-2xl mx-auto h-full space-y-6">
+        <div className={`mx-auto h-full ${twoColumn ? 'grid grid-cols-2 gap-6 content-start' : 'max-w-2xl space-y-6'}`}>
           {section.categories.map((category, index) => {
             const isVeg = section.title.includes("VEG") && !section.title.includes("NON");
             const isNonVeg = section.title.includes("NON-VEG") || section.title.includes("MEAT") || section.title.includes("CHICKEN");
@@ -786,7 +788,8 @@ export const PrintPreview = ({ isOpen, onClose }: PrintPreviewProps) => {
         ]
       },
       variant: "cyan" as const,
-      key: "beers-coolers"
+      key: "beers-coolers",
+      twoColumn: true
     },
     // Page 5: VODKAS, RUMS & SPIRITS
     {
@@ -836,7 +839,8 @@ export const PrintPreview = ({ isOpen, onClose }: PrintPreviewProps) => {
         ]
       },
       variant: "gold" as const,
-      key: "premium"
+      key: "premium",
+      twoColumn: true
     },
     // Page 8: REFRESHMENTS
     {
@@ -1159,7 +1163,7 @@ export const PrintPreview = ({ isOpen, onClose }: PrintPreviewProps) => {
 
         <!-- Content -->
         <div style="flex: 1; padding-left: 48px; padding-right: 48px; padding-bottom: 24px; overflow: hidden;">
-          <div style="max-width: 672px; margin: 0 auto;">
+          <div style="max-width: 672px; margin: 0 auto; ${(page as any).twoColumn ? 'display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start;' : ''}">
           ${page.section.categories.map((category, catIdx) => `
             <div style="margin-bottom: 32px;">
               <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; padding-bottom: 4px; position: relative;">
@@ -1490,6 +1494,7 @@ export const PrintPreview = ({ isOpen, onClose }: PrintPreviewProps) => {
                   isCover={(pages[currentPage] as any).isCover}
                   isBackCover={(pages[currentPage] as any).isBackCover}
                   proverb={(pages[currentPage] as any).proverb}
+                  twoColumn={(pages[currentPage] as any).twoColumn}
                 />
               </div>
             </div>
