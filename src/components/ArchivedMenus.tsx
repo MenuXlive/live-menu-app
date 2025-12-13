@@ -3,12 +3,13 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, FileText, Calendar, Download, Eye, X } from "lucide-react";
+import { Loader2, FileText, Calendar, Download, Eye, X, RotateCcw } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
+import { useMenu } from "@/contexts/MenuContext";
 
 interface ArchivedMenu {
   id: string;
@@ -35,9 +36,11 @@ const escapeHtml = (text: string | undefined | null): string => {
 };
 
 export const ArchivedMenus = ({ isOpen, onClose }: ArchivedMenusProps) => {
+  const { restoreDatabase } = useMenu();
   const [archivedMenus, setArchivedMenus] = useState<ArchivedMenu[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isExporting, setIsExporting] = useState<string | null>(null);
+  const [isRestoring, setIsRestoring] = useState<string | null>(null);
 
   useEffect(() => {
     if (isOpen) {
@@ -61,9 +64,24 @@ export const ArchivedMenus = ({ isOpen, onClose }: ArchivedMenusProps) => {
     setIsLoading(false);
   };
 
+  const handleRestore = async (archive: ArchivedMenu) => {
+    if (confirm("Are you sure you want to restore this version? This will replace your current menu data.")) {
+      setIsRestoring(archive.id);
+      const success = await restoreDatabase(archive.menu_data);
+      setIsRestoring(null);
+
+      if (success) {
+        toast.success("Menu restored successfully");
+        onClose();
+      } else {
+        toast.error("Failed to restore menu");
+      }
+    }
+  };
+
   const generatePDFForArchive = async (archive: ArchivedMenu) => {
     setIsExporting(archive.id);
-    
+
     try {
       const menuData = archive.menu_data;
       const pdf = new jsPDF({
@@ -76,7 +94,7 @@ export const ArchivedMenus = ({ isOpen, onClose }: ArchivedMenusProps) => {
 
       for (let i = 0; i < pages.length; i++) {
         if (i > 0) pdf.addPage([794, 1123]);
-        
+
         const canvas = await capturePageFromData(pages[i], i, pages.length);
         if (canvas) {
           const imgData = canvas.toDataURL("image/jpeg", 0.95);
@@ -97,7 +115,7 @@ export const ArchivedMenus = ({ isOpen, onClose }: ArchivedMenusProps) => {
 
   const buildPagesFromMenuData = (menuData: any) => {
     const pages = [];
-    
+
     // Page 1: Veg Snacks
     if (menuData.snacksAndStarters?.categories?.[0]) {
       pages.push({
@@ -105,7 +123,7 @@ export const ArchivedMenus = ({ isOpen, onClose }: ArchivedMenusProps) => {
         variant: "cyan" as const
       });
     }
-    
+
     // Page 2: Non-Veg Snacks
     if (menuData.snacksAndStarters?.categories?.[1]) {
       pages.push({
@@ -113,7 +131,7 @@ export const ArchivedMenus = ({ isOpen, onClose }: ArchivedMenusProps) => {
         variant: "cyan" as const
       });
     }
-    
+
     // Page 3: Handi & Mutton
     if (menuData.foodMenu?.categories) {
       const cats = [menuData.foodMenu.categories[0], menuData.foodMenu.categories[1]].filter(Boolean);
@@ -124,7 +142,7 @@ export const ArchivedMenus = ({ isOpen, onClose }: ArchivedMenusProps) => {
         });
       }
     }
-    
+
     // Page 4: Thali & Veg Mains
     if (menuData.foodMenu?.categories) {
       const cats = [menuData.foodMenu.categories[3], menuData.foodMenu.categories[2]].filter(Boolean);
@@ -135,8 +153,8 @@ export const ArchivedMenus = ({ isOpen, onClose }: ArchivedMenusProps) => {
         });
       }
     }
-    
-    // Page 5: Beers & Vodkas
+
+    // Page 5: Beers
     if (menuData.beveragesMenu?.categories) {
       const cats = [menuData.beveragesMenu.categories[0], menuData.beveragesMenu.categories[1]].filter(Boolean);
       if (cats.length > 0) {
@@ -146,26 +164,94 @@ export const ArchivedMenus = ({ isOpen, onClose }: ArchivedMenusProps) => {
         });
       }
     }
-    
-    // Page 6: Rums & Whiskies
+
+    // Page 6: Breezers & Vodkas
     if (menuData.beveragesMenu?.categories) {
-      const cats = [menuData.beveragesMenu.categories[2], menuData.beveragesMenu.categories[3], menuData.beveragesMenu.categories[4]].filter(Boolean);
+      const cats = [
+        menuData.beveragesMenu.categories[2],
+        menuData.beveragesMenu.categories[3]
+      ].filter(Boolean);
       if (cats.length > 0) {
         pages.push({
-          section: { title: "AGED SPIRITS", categories: cats },
+          section: { title: "VODKAS & COOLERS", categories: cats },
           variant: "cyan" as const
         });
       }
     }
-    
-    // Page 7: Celebration Bottles
-    if (menuData.beveragesMenu?.categories?.[5]) {
+
+    // Page 7: Rums
+    if (menuData.beveragesMenu?.categories) {
+      const cats = [
+        menuData.beveragesMenu.categories[4]
+      ].filter(Boolean);
+      if (cats.length > 0) {
+        pages.push({
+          section: { title: "RUM SELECTION", categories: cats },
+          variant: "cyan" as const
+        });
+      }
+    }
+
+    // Page 8: Indian Whiskies
+    if (menuData.beveragesMenu?.categories) {
+      const cats = [
+        menuData.beveragesMenu.categories[5] // Indian Whiskies
+      ].filter(Boolean);
+      if (cats.length > 0) {
+        pages.push({
+          section: { title: "INDIAN WHISKY RESERVES", categories: cats },
+          variant: "gold" as const
+        });
+      }
+    }
+
+    // Page 9: World Whiskies I
+    if (menuData.beveragesMenu?.categories?.[6]) {
+      const cat = menuData.beveragesMenu.categories[6];
+      const items1 = cat.items.slice(0, 8);
+      if (items1.length > 0) {
+        pages.push({
+          section: { title: "WORLD WHISKY CLASSICS", categories: [{ ...cat, items: items1 }] },
+          variant: "gold" as const
+        });
+      }
+    }
+
+    // Page 10: World Whiskies II
+    if (menuData.beveragesMenu?.categories?.[6]) {
+      const cat = menuData.beveragesMenu.categories[6];
+      const items2 = cat.items.slice(8);
+      if (items2.length > 0) {
+        pages.push({
+          section: { title: "PREMIUM & SINGLE MALTS", categories: [{ ...cat, items: items2 }] },
+          variant: "gold" as const
+        });
+      }
+    }
+
+
+    // Page 8: Celebration & Premium
+    if (menuData.beveragesMenu?.categories) {
+      const cats = [
+        menuData.beveragesMenu.categories[7], // Celebration Bottles
+        menuData.beveragesMenu.categories[8]  // Premium Vodkas
+      ].filter(Boolean);
+      if (cats.length > 0) {
+        pages.push({
+          section: { title: "CELEBRATION & LUXURY", categories: cats },
+          variant: "gold" as const
+        });
+      }
+    }
+
+    // Page 9: Wines
+    if (menuData.beveragesMenu?.categories?.[9]) {
       pages.push({
-        section: { title: "CELEBRATION BOTTLES", categories: [menuData.beveragesMenu.categories[5]] },
-        variant: "gold" as const
+        section: { title: "FINE WINES", categories: [menuData.beveragesMenu.categories[9]] },
+        variant: "magenta" as const
       });
     }
-    
+
     // Page 8: Sides
     if (menuData.sideItems?.categories) {
       const cats = [menuData.sideItems.categories[0], menuData.sideItems.categories[1], menuData.sideItems.categories[2]].filter(Boolean);
@@ -176,7 +262,7 @@ export const ArchivedMenus = ({ isOpen, onClose }: ArchivedMenusProps) => {
         });
       }
     }
-    
+
     return pages;
   };
 
@@ -192,7 +278,7 @@ export const ArchivedMenus = ({ isOpen, onClose }: ArchivedMenusProps) => {
     document.body.appendChild(tempDiv);
 
     const accentColor = page.variant === "cyan" ? "#00f0ff" : page.variant === "magenta" ? "#ff00ff" : "#ffd700";
-    
+
     const pageElement = document.createElement("div");
     pageElement.innerHTML = `
       <div style="font-family: 'Rajdhani', sans-serif; background: #0a0a0f; width: 794px; min-height: 1123px; position: relative; display: flex; flex-direction: column;">
@@ -243,6 +329,12 @@ export const ArchivedMenus = ({ isOpen, onClose }: ArchivedMenusProps) => {
                       <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 16px;">
                         <div style="flex: 1;">
                           <h4 style="font-size: 15px; font-weight: 600; color: white; letter-spacing: 0.05em; text-transform: uppercase;">${escapeHtml(item.name)}</h4>
+                          <div style="display: flex; gap: 6px; margin: 4px 0;">
+                            ${item.isChefSpecial ? `<span style="padding: 2px 4px; font-size: 8px; font-weight: bold; background: #be185d; color: white; border-radius: 2px; text-transform: uppercase;">⭐ Chef's Special</span>` : ""}
+                            ${item.isBestSeller ? `<span style="padding: 2px 4px; font-size: 8px; font-weight: bold; background: #0ea5e9; color: white; border-radius: 2px; text-transform: uppercase;">🔥 Best Seller</span>` : ""}
+                            ${item.isPremium ? `<span style="padding: 2px 4px; font-size: 8px; font-weight: bold; background: #eab308; color: black; border-radius: 2px; text-transform: uppercase;">✨ Premium</span>` : ""}
+                            ${item.isTopShelf ? `<span style="padding: 2px 4px; font-size: 8px; font-weight: bold; background: #9333ea; color: white; border-radius: 2px; text-transform: uppercase;">🏆 Top Shelf</span>` : ""}
+                          </div>
                           ${item.description ? `<p style="font-size: 11px; color: #9ca3af; margin-top: 4px; font-style: italic;">${escapeHtml(item.description)}</p>` : ""}
                         </div>
                         <div style="flex-shrink: 0; text-align: right;">
@@ -341,22 +433,40 @@ export const ArchivedMenus = ({ isOpen, onClose }: ArchivedMenusProps) => {
                           {archive.notes || "Menu archive"}
                         </CardDescription>
                       </div>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => generatePDFForArchive(archive)}
-                        disabled={isExporting === archive.id}
-                        className="border-cyan-500/50 text-cyan-400 hover:bg-cyan-500/10"
-                      >
-                        {isExporting === archive.id ? (
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                        ) : (
-                          <>
-                            <Download className="h-4 w-4 mr-1" />
-                            PDF
-                          </>
-                        )}
-                      </Button>
+                      <div className="flex gap-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleRestore(archive)}
+                          disabled={isRestoring === archive.id}
+                          className="border-green-500/50 text-green-400 hover:bg-green-500/10"
+                        >
+                          {isRestoring === archive.id ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : (
+                            <>
+                              <RotateCcw className="h-4 w-4 mr-1" />
+                              Restore
+                            </>
+                          )}
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => generatePDFForArchive(archive)}
+                          disabled={isExporting === archive.id}
+                          className="border-cyan-500/50 text-cyan-400 hover:bg-cyan-500/10"
+                        >
+                          {isExporting === archive.id ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : (
+                            <>
+                              <Download className="h-4 w-4 mr-1" />
+                              PDF
+                            </>
+                          )}
+                        </Button>
+                      </div>
                     </div>
                   </CardHeader>
                 </Card>

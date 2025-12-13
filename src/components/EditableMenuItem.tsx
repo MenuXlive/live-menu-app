@@ -3,6 +3,8 @@ import { MenuItem as MenuItemType } from "@/data/menuData";
 import { cn } from "@/lib/utils";
 import { useMenu } from "@/contexts/MenuContext";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import { Check, X, Trash2 } from "lucide-react";
 
 interface EditableMenuItemProps {
@@ -53,13 +55,13 @@ export const EditableMenuItem = ({
             value={editedItem.name}
             onChange={(e) => setEditedItem({ ...editedItem, name: e.target.value })}
             placeholder="Item name"
-            className="h-9 text-sm font-medium bg-background/50 border-border/40"
+            className="h-9 text-sm font-medium bg-background/50 border-border/40 text-white"
           />
           <Input
             value={editedItem.description || ""}
             onChange={(e) => setEditedItem({ ...editedItem, description: e.target.value })}
             placeholder="Description (e.g., Artisan preparation with house-made spices)"
-            className="h-9 text-sm bg-background/50 border-border/40"
+            className="h-9 text-sm bg-background/50 border-border/40 text-white"
           />
           <Input
             value={editedItem.image || ""}
@@ -67,6 +69,47 @@ export const EditableMenuItem = ({
             placeholder="Image URL (https://...)"
             className="h-9 text-sm bg-background/50 font-mono text-xs text-muted-foreground"
           />
+
+          {/* Tags / Badges Toggles */}
+          <div className="flex flex-wrap gap-4 py-2 border-y border-white/10 my-1">
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id={`chef-${index}`}
+                checked={editedItem.isChefSpecial}
+                onCheckedChange={(c) => setEditedItem({ ...editedItem, isChefSpecial: c as boolean })}
+                className="border-magenta-500 data-[state=checked]:bg-magenta-500"
+              />
+              <Label htmlFor={`chef-${index}`} className="text-[10px] uppercase tracking-wider text-magenta-400 font-bold cursor-pointer">Chef's Special</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id={`best-${index}`}
+                checked={editedItem.isBestSeller}
+                onCheckedChange={(c) => setEditedItem({ ...editedItem, isBestSeller: c as boolean })}
+                className="border-cyan-500 data-[state=checked]:bg-cyan-500"
+              />
+              <Label htmlFor={`best-${index}`} className="text-[10px] uppercase tracking-wider text-cyan-400 font-bold cursor-pointer">Best Seller</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id={`premium-${index}`}
+                checked={editedItem.isPremium}
+                onCheckedChange={(c) => setEditedItem({ ...editedItem, isPremium: c as boolean })}
+                className="border-yellow-500 data-[state=checked]:bg-yellow-500"
+              />
+              <Label htmlFor={`premium-${index}`} className="text-[10px] uppercase tracking-wider text-yellow-400 font-bold cursor-pointer">Premium</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id={`top-${index}`}
+                checked={editedItem.isTopShelf}
+                onCheckedChange={(c) => setEditedItem({ ...editedItem, isTopShelf: c as boolean })}
+                className="border-purple-500 data-[state=checked]:bg-purple-500"
+              />
+              <Label htmlFor={`top-${index}`} className="text-[10px] uppercase tracking-wider text-purple-400 font-bold cursor-pointer">Top Shelf</Label>
+            </div>
+          </div>
+
           <div className="flex gap-2 items-center">
             {hasSizes ? (
               editedItem.sizes?.map((size, i) => (
@@ -78,7 +121,7 @@ export const EditableMenuItem = ({
                     newSizes[i] = e.target.value;
                     setEditedItem({ ...editedItem, sizes: newSizes });
                   }}
-                  className="h-9 w-20 text-sm bg-background/50 border-border/40"
+                  className="h-9 w-20 text-sm bg-background/50 border-border/40 text-white"
                 />
               ))
             ) : hasMultiplePrices ? (
@@ -87,13 +130,13 @@ export const EditableMenuItem = ({
                   value={editedItem.halfPrice || ""}
                   onChange={(e) => setEditedItem({ ...editedItem, halfPrice: e.target.value })}
                   placeholder="Half"
-                  className="h-9 w-24 text-sm bg-background/50 border-border/40"
+                  className="h-9 w-24 text-sm bg-background/50 border-border/40 text-white"
                 />
                 <Input
                   value={editedItem.fullPrice || ""}
                   onChange={(e) => setEditedItem({ ...editedItem, fullPrice: e.target.value })}
                   placeholder="Full"
-                  className="h-9 w-24 text-sm bg-background/50 border-border/40"
+                  className="h-9 w-24 text-sm bg-background/50 border-border/40 text-white"
                 />
               </>
             ) : (
@@ -101,10 +144,10 @@ export const EditableMenuItem = ({
                 value={editedItem.price || ""}
                 onChange={(e) => setEditedItem({ ...editedItem, price: e.target.value })}
                 placeholder="Price"
-                className="h-9 w-24 text-sm bg-background/50 border-border/40"
+                className="h-9 w-24 text-sm bg-background/50 border-border/40 text-white"
               />
             )}
-            <button onClick={handleSave} className="p-2 hover:bg-primary/20 rounded-sm transition-colors">
+            <button onClick={handleSave} className="p-2 hover:bg-primary/20 rounded-sm transition-colors ml-auto">
               <Check className="w-4 h-4 text-primary" />
             </button>
             <button onClick={handleCancel} className="p-2 hover:bg-destructive/20 rounded-sm transition-colors">
@@ -167,9 +210,9 @@ export const EditableMenuItem = ({
         <div className="flex-1 flex justify-between gap-4 min-w-0 pt-1">
           {/* Item name and description */}
           <div className="flex-1 min-w-0 pr-2">
-            <div className="flex items-baseline gap-3">
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
               <span className={cn(
-                "w-1.5 h-1.5 rounded-sm rotate-45 transition-all duration-300 group-hover:scale-125 group-hover:shadow-[0_0_8px_currentColor] flex-shrink-0 self-center",
+                "w-1.5 h-1.5 rounded-sm rotate-45 transition-all duration-300 group-hover:scale-125 group-hover:shadow-[0_0_8px_currentColor] flex-shrink-0",
                 accentColor === "cyan"
                   ? "bg-neon-cyan shadow-neon-cyan/20 text-neon-cyan"
                   : "bg-neon-magenta shadow-neon-magenta/20 text-neon-magenta"
@@ -177,9 +220,30 @@ export const EditableMenuItem = ({
               <span className="font-orbitron text-base font-medium tracking-wide text-foreground group-hover:text-white transition-colors">
                 {item.name}
               </span>
-              {/* New Badge for premium/signature items if marked (can be added to data later) */}
-              {item.name.toLowerCase().includes('signature') && (
+
+              {/* Badges */}
+              {item.isChefSpecial && (
+                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-neon-magenta/10 text-neon-magenta tracking-widest uppercase border border-neon-magenta/20">
+                  Chef's Special
+                </span>
+              )}
+              {item.isBestSeller && (
+                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-neon-cyan/10 text-neon-cyan tracking-widest uppercase border border-neon-cyan/20">
+                  Best Seller
+                </span>
+              )}
+              {item.isPremium && (
                 <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-neon-gold/10 text-neon-gold tracking-widest uppercase border border-neon-gold/20">
+                  Premium
+                </span>
+              )}
+              {item.isTopShelf && (
+                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-purple-500/10 text-purple-400 tracking-widest uppercase border border-purple-500/20">
+                  Top Shelf
+                </span>
+              )}
+              {item.name.toLowerCase().includes('signature') && (
+                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-white/10 text-slate-300 tracking-widest uppercase border border-white/20">
                   Signature
                 </span>
               )}

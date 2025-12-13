@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Loader2, LogOut, Menu, Users, Settings, ShieldCheck, ShieldX, Home, Percent, Download, Edit, QrCode, Archive } from 'lucide-react';
+import { Loader2, LogOut, Menu, Users, Settings, ShieldCheck, ShieldX, Home, Percent, Download, Edit, QrCode, Archive, RotateCcw } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { PrintPreview } from '@/components/PrintPreview';
 import { QRCodeGenerator } from '@/components/QRCodeGenerator';
@@ -18,7 +18,7 @@ import { ArchivedMenus } from '@/components/ArchivedMenus';
 
 const AdminDashboard = () => {
   const { user, isAdmin, isLoading, signOut } = useAuth();
-  const { menuData, setIsEditMode, isEditMode, adjustPrices } = useMenu();
+  const { menuData, setIsEditMode, isEditMode, adjustPrices, resetDatabase } = useMenu();
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -28,6 +28,7 @@ const AdminDashboard = () => {
   const [isPrintPreviewOpen, setIsPrintPreviewOpen] = useState(false);
   const [isQRCodeOpen, setIsQRCodeOpen] = useState(false);
   const [isArchivedMenusOpen, setIsArchivedMenusOpen] = useState(false);
+  const [isResetDialogOpen, setIsResetDialogOpen] = useState(false);
   const [showPDFPrompt, setShowPDFPrompt] = useState(false);
 
   useEffect(() => {
@@ -43,6 +44,23 @@ const AdminDashboard = () => {
       description: 'You have been signed out successfully.',
     });
     navigate('/');
+  };
+
+  const handleResetDatabase = async () => {
+    const success = await resetDatabase();
+    if (success) {
+      toast({
+        title: 'Database Reset',
+        description: 'Menu has been reset to default values.',
+      });
+      setIsResetDialogOpen(false);
+    } else {
+      toast({
+        title: 'Reset Failed',
+        description: 'Failed to reset database. Check console for details.',
+        variant: 'destructive',
+      });
+    }
   };
 
   const toggleEditMode = () => {
@@ -281,6 +299,44 @@ const AdminDashboard = () => {
                 <Edit className="w-4 h-4 mr-2" />
                 {isEditMode ? 'Exit Edit' : 'Edit Menu'}
               </Button>
+
+              {/* Reset Database */}
+              <Dialog open={isResetDialogOpen} onOpenChange={setIsResetDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button
+                    variant="outline"
+                    disabled={!isAdmin}
+                    className="border-red-500/50 text-red-400 hover:bg-red-500/10"
+                  >
+                    <RotateCcw className="w-4 h-4 mr-2" />
+                    Reset Data
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="bg-slate-800 border-slate-600">
+                  <DialogHeader>
+                    <DialogTitle className="text-white text-red-500">⚠ Danger Zone</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4">
+                    <p className="text-slate-300">
+                      This will <strong>delete ALL menu items</strong> in the database and reset them to the default starting menu.
+                      This cannot be undone.
+                    </p>
+                    <p className="text-slate-400 text-sm">
+                      Use this if the menu data is corrupted or you want to start fresh with the default template.
+                    </p>
+                    <div className="flex justify-end gap-3 pt-4">
+                      <Button variant="ghost" onClick={() => setIsResetDialogOpen(false)}>Cancel</Button>
+                      <Button
+                        variant="destructive"
+                        onClick={handleResetDatabase}
+                        className="bg-red-600 hover:bg-red-700"
+                      >
+                        Yes, Reset Database
+                      </Button>
+                    </div>
+                  </div>
+                </DialogContent>
+              </Dialog>
 
               {/* Download/Print */}
               <Button

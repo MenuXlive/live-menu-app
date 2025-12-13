@@ -113,8 +113,13 @@ export const useMenuDatabase = () => {
     };
   };
 
-  const seedDatabase = async () => {
-    const sectionsData: { type: MenuSectionType; title: string; display_order: number; data: MenuSection }[] = [
+  const seedDatabase = async (priceMap?: Map<string, any>, sourceData?: any) => {
+    const sectionsData: { type: MenuSectionType; title: string; display_order: number; data: MenuSection }[] = sourceData ? [
+      { type: 'snacks', title: sourceData.snacksAndStarters?.title || "ARTISAN APPETIZERS", display_order: 0, data: sourceData.snacksAndStarters },
+      { type: 'food', title: sourceData.foodMenu?.title || "GLOBAL MAINS", display_order: 1, data: sourceData.foodMenu },
+      { type: 'beverages', title: sourceData.beveragesMenu?.title || "CRAFT LIBATIONS", display_order: 2, data: sourceData.beveragesMenu },
+      { type: 'sides', title: sourceData.sideItems?.title || "ARTISAN SIDES", display_order: 3, data: sourceData.sideItems },
+    ].filter(s => s.data) : [
       { type: 'snacks', title: snacksAndStarters.title, display_order: 0, data: snacksAndStarters },
       { type: 'food', title: foodMenu.title, display_order: 1, data: foodMenu },
       { type: 'beverages', title: beveragesMenu.title, display_order: 2, data: beveragesMenu },
@@ -155,17 +160,20 @@ export const useMenuDatabase = () => {
         }
 
         // Insert items
-        const itemsToInsert = category.items.map((item, idx) => ({
-          category_id: catResult.id,
-          name: item.name,
-          description: item.description || null,
-          price: parsePrice(item.price),
-          half_price: parsePrice(item.halfPrice),
-          full_price: parsePrice(item.fullPrice),
-          sizes: item.sizes || null,
-          display_order: idx,
-          image_url: item.image || null,
-        }));
+        const itemsToInsert = category.items.map((item, idx) => {
+          const existing = priceMap?.get(item.name);
+          return {
+            category_id: catResult.id,
+            name: item.name,
+            description: item.description || null,
+            price: existing ? existing.price : parsePrice(item.price),
+            half_price: existing ? existing.half_price : parsePrice(item.halfPrice),
+            full_price: existing ? existing.full_price : parsePrice(item.fullPrice),
+            sizes: existing ? existing.sizes : (item.sizes || null),
+            display_order: idx,
+            image_url: item.image || null,
+          };
+        });
 
         const { error: itemsError } = await supabase
           .from("menu_items")
@@ -239,6 +247,42 @@ export const useMenuDatabase = () => {
     setIsLoading(false);
   };
 
+  const resetDatabase = async (preservePrices: boolean = true) => {
+    setIsLoading(true);
+    try {
+      // Auto-archive before reset to prevent data loss
+      await archiveCurrentMenu("Auto-archive before reset");
+
+      let priceMap = new Map<string, any>();
+
+      if (preservePrices) {
+        // Fetch current prices to preserve
+        const { data: currentItems } = await supabase
+          .from('menu_items')
+          .select('name, price, half_price, full_price, sizes');
+
+        if (currentItems) {
+          currentItems.forEach(item => {
+            priceMap.set(item.name, item);
+          });
+        }
+      }
+
+      // Delete in order to respect foreign keys
+      await supabase.from("menu_items").delete().neq("id", "00000000-0000-0000-0000-000000000000"); // Delete all
+      await supabase.from("menu_categories").delete().neq("id", "00000000-0000-0000-0000-000000000000");
+      await supabase.from("menu_sections").delete().neq("id", "00000000-0000-0000-0000-000000000000");
+
+      await seedDatabase(priceMap);
+      return true;
+    } catch (error) {
+      console.error("Error resetting database:", error);
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // Archive current menu before making changes
   const archiveCurrentMenu = async (notes?: string): Promise<boolean> => {
     try {
@@ -285,11 +329,35 @@ export const useMenuDatabase = () => {
     return data || [];
   };
 
+  const restoreDatabase = async (menuData: any) => {
+    setIsLoading(true);
+    try {
+      // Archive current before restore
+      await archiveCurrentMenu("Auto-archive before restore");
+
+      // Wipe
+      await supabase.from("menu_items").delete().neq("id", "00000000-0000-0000-0000-000000000000");
+      await supabase.from("menu_categories").delete().neq("id", "00000000-0000-0000-0000-000000000000");
+      await supabase.from("menu_sections").delete().neq("id", "00000000-0000-0000-0000-000000000000");
+
+      // Seed with ARCHIVED data
+      await seedDatabase(undefined, menuData);
+      return true;
+    } catch (error) {
+      console.error("Error restoring database:", error);
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return {
     fetchMenuData,
     updateMenuItem,
     checkAndSeed,
     archiveCurrentMenu,
+    resetDatabase,
+    restoreDatabase,
     fetchArchivedMenus,
     isLoading,
     isSeeded,

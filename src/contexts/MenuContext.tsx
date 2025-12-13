@@ -19,6 +19,8 @@ interface MenuContextType {
   deleteMenuItem: (sectionKey: string, categoryIndex: number, itemIndex: number) => void;
   adjustPrices: (percentage: number, sectionKey?: string, categoryIndex?: number) => Promise<void>;
   refreshMenu: () => Promise<void>;
+  resetDatabase: () => Promise<boolean>;
+  restoreDatabase: (menuData: any) => Promise<boolean>;
 }
 
 const MenuContext = createContext<MenuContextType | undefined>(undefined);
@@ -62,7 +64,7 @@ export const MenuProvider = ({ children }: { children: ReactNode }) => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  const { fetchMenuData, updateMenuItem: dbUpdateMenuItem, checkAndSeed, archiveCurrentMenu } = useMenuDatabase();
+  const { fetchMenuData, updateMenuItem: dbUpdateMenuItem, checkAndSeed, archiveCurrentMenu, resetDatabase: dbResetDatabase, restoreDatabase: dbRestoreDatabase } = useMenuDatabase();
 
   const refreshMenu = async () => {
     setIsLoading(true);
@@ -73,12 +75,32 @@ export const MenuProvider = ({ children }: { children: ReactNode }) => {
     setIsLoading(false);
   };
 
+  const resetDatabase = async () => {
+    const success = await dbResetDatabase();
+    if (success) {
+      await refreshMenu();
+    }
+    return success;
+  };
+
+  const restoreDatabase = async (menuData: any) => {
+    const success = await dbRestoreDatabase(menuData);
+    if (success) {
+      await refreshMenu();
+    }
+    return success;
+  };
+
   useEffect(() => {
     const init = async () => {
-      // Temporarily disable DB fetch to use local file data
-      // await checkAndSeed();
-      // await refreshMenu(); 
-      setIsLoading(false);
+      try {
+        await checkAndSeed();
+        await refreshMenu();
+      } catch (error) {
+        console.error("Failed to initialize menu database:", error);
+      } finally {
+        setIsLoading(false);
+      }
     };
     init();
   }, []);
@@ -163,7 +185,9 @@ export const MenuProvider = ({ children }: { children: ReactNode }) => {
       addMenuItem,
       deleteMenuItem,
       adjustPrices,
-      refreshMenu
+      refreshMenu,
+      resetDatabase,
+      restoreDatabase
     }}>
       {children}
     </MenuContext.Provider>
