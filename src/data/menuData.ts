@@ -10,6 +10,9 @@ export interface MenuItem {
   isBestSeller?: boolean;
   isPremium?: boolean;
   isTopShelf?: boolean;
+  isNew?: boolean;
+  isVeg?: boolean;
+  isSpicy?: boolean;
 }
 
 export interface MenuCategory {

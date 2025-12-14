@@ -300,7 +300,7 @@ const AdminDashboard = () => {
                 {isEditMode ? 'Exit Edit' : 'Edit Menu'}
               </Button>
 
-              {/* Reset Database */}
+              {/* Sync Database */}
               <Dialog open={isResetDialogOpen} onOpenChange={setIsResetDialogOpen}>
                 <DialogTrigger asChild>
                   <Button
@@ -309,20 +309,20 @@ const AdminDashboard = () => {
                     className="border-red-500/50 text-red-400 hover:bg-red-500/10"
                   >
                     <RotateCcw className="w-4 h-4 mr-2" />
-                    Reset Data
+                    Sync from Code
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="bg-slate-800 border-slate-600">
                   <DialogHeader>
-                    <DialogTitle className="text-white text-red-500">⚠ Danger Zone</DialogTitle>
+                    <DialogTitle className="text-white text-red-500">⚠ Sync Database from Code</DialogTitle>
                   </DialogHeader>
                   <div className="space-y-4">
                     <p className="text-slate-300">
-                      This will <strong>delete ALL menu items</strong> in the database and reset them to the default starting menu.
-                      This cannot be undone.
+                      This will <strong>overwrite ALL menu items</strong> in the database with the data from your source code files (`menuData.ts`).
+                      This adds new items, updates pricing (unless preserved), and syncs tags.
                     </p>
                     <p className="text-slate-400 text-sm">
-                      Use this if the menu data is corrupted or you want to start fresh with the default template.
+                      Use this to push your code changes (new dishes, tags) to the live database.
                     </p>
                     <div className="flex justify-end gap-3 pt-4">
                       <Button variant="ghost" onClick={() => setIsResetDialogOpen(false)}>Cancel</Button>
@@ -331,7 +331,7 @@ const AdminDashboard = () => {
                         onClick={handleResetDatabase}
                         className="bg-red-600 hover:bg-red-700"
                       >
-                        Yes, Reset Database
+                        Yes, Sync Database
                       </Button>
                     </div>
                   </div>

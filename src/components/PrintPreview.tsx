@@ -472,7 +472,7 @@ const PrintablePage = ({
             </div>
             <div>
               <p className="text-gray-300 text-sm mb-2">Follow our journey</p>
-              <h3 className="text-xl font-bold tracking-[0.2em]" style={{ color: accentColor, fontFamily: "'Orbitron', sans-serif" }}>live.lounge15</h3>
+              <h3 className="text-xl font-bold tracking-[0.2em]" style={{ color: accentColor, fontFamily: "'Orbitron', sans-serif" }}>Live.lounge.wakad</h3>
             </div>
           </div>
 
@@ -620,8 +620,8 @@ const PrintablePage = ({
       {proverb && (
         <div className="px-12 py-2 text-center relative z-10">
           <p
-            className="text-sm italic text-gray-300 tracking-wide"
-            style={{ fontFamily: "'Playfair Display', serif" }}
+            className="text-lg italic text-gray-300 tracking-wide"
+            style={{ fontFamily: "'Dancing Script', cursive" }}
           >
             "{proverb}"
           </p>
@@ -665,12 +665,14 @@ const PrintablePage = ({
           <div className="text-center flex-shrink-0 px-6">
             <div className="flex items-center gap-2">
               <div className="w-8 h-[1px]" style={{ background: `linear-gradient(90deg, transparent, ${accentColor}50)` }} />
-              <div className="flex flex-col items-center">
-                <p className="text-[7px] uppercase tracking-widest mb-0.5" style={{ color: accentColor }}>Page</p>
-                <p className="text-lg font-bold text-white" style={{ fontFamily: "'Orbitron', sans-serif" }}>
-                  {String(pageNumber).padStart(2, '0')}
-                  <span className="text-gray-600 text-xs ml-1">/ {String(totalPages).padStart(2, '0')}</span>
-                </p>
+              <div className="relative w-12 h-12 flex items-center justify-center">
+                <div className="absolute inset-0 border transform rotate-45" style={{ borderColor: `${accentColor}50` }} />
+                <div className="relative z-10 flex flex-col items-center">
+                  <p className="text-[6px] uppercase tracking-widest mb-0.5" style={{ color: accentColor }}>Page</p>
+                  <p className="text-[14px] font-bold text-white leading-none" style={{ fontFamily: "'Orbitron', sans-serif" }}>
+                    {String(pageNumber).padStart(2, '0')}
+                  </p>
+                </div>
               </div>
               <div className="w-8 h-[1px]" style={{ background: `linear-gradient(-90deg, transparent, ${accentColor}50)` }} />
             </div>
@@ -1053,7 +1055,7 @@ export const PrintPreview = ({ isOpen, onClose }: PrintPreviewProps) => {
                </div>
                <div>
                  <p style="color: #d1d5db; font-size: 14px; margin-bottom: 8px;">Follow our journey</p>
-                 <h3 style="font-size: 20px; font-weight: bold; letter-spacing: 0.2em; color: ${accentColor}; font-family: 'Orbitron', sans-serif;">live.lounge15</h3>
+                 <h3 style="font-size: 20px; font-weight: bold; letter-spacing: 0.2em; color: ${accentColor}; font-family: 'Orbitron', sans-serif;">Live.lounge.wakad</h3>
                </div>
             </div>
 
@@ -1262,9 +1264,12 @@ export const PrintPreview = ({ isOpen, onClose }: PrintPreviewProps) => {
             <div style="text-align: center; flex-shrink: 0; padding: 0 24px;">
               <div style="display: flex; align-items: center; gap: 8px;">
                 <div style="width: 32px; height: 1px; background: linear-gradient(90deg, transparent, ${accentColor}50);"></div>
-                <div style="display: flex; flex-direction: column; align-items: center;">
-                  <p style="font-size: 7px; text-transform: uppercase; letter-spacing: 0.15em; color: ${accentColor}; margin: 0 0 2px 0;">Page</p>
-                  <p style="font-size: 18px; font-weight: bold; color: white; font-family: 'Orbitron', sans-serif; margin: 0;">${String(index + 1).padStart(2, '0')}<span style="font-size: 12px; color: #4b5563; margin-left: 4px;">/ ${String(pages.length).padStart(2, '0')}</span></p>
+                <div style="position: relative; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;">
+                  <div style="position: absolute; inset: 0; border: 1px solid ${accentColor}40; transform: rotate(45deg);"></div>
+                  <div style="position: relative; z-index: 10; display: flex; flex-direction: column; align-items: center;">
+                    <p style="font-size: 6px; text-transform: uppercase; letter-spacing: 0.1em; color: ${accentColor}; margin: 0 0 2px 0;">Page</p>
+                    <p style="font-size: 14px; font-weight: bold; color: white; font-family: 'Orbitron', sans-serif; margin: 0; line-height: 1;">${String(index + 1).padStart(2, '0')}</p>
+                  </div>
                 </div>
                 <div style="width: 32px; height: 1px; background: linear-gradient(-90deg, transparent, ${accentColor}50);"></div>
               </div>

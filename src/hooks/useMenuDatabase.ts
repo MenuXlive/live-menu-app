@@ -15,6 +15,13 @@ interface DbMenuItem {
   sizes: string[] | null;
   display_order: number;
   image_url: string | null;
+  is_best_seller: boolean;
+  is_chef_special: boolean;
+  is_new: boolean;
+  is_veg: boolean;
+  is_spicy: boolean;
+  is_premium: boolean;
+  is_top_shelf: boolean;
 }
 
 interface DbCategory {
@@ -52,6 +59,13 @@ const dbToMenuItem = (item: DbMenuItem): MenuItem => ({
   fullPrice: formatPrice(item.full_price),
   sizes: item.sizes || undefined,
   image: item.image_url || undefined,
+  isBestSeller: item.is_best_seller,
+  isChefSpecial: item.is_chef_special,
+  isNew: item.is_new,
+  isVeg: item.is_veg,
+  isSpicy: item.is_spicy,
+  isPremium: item.is_premium,
+  isTopShelf: item.is_top_shelf,
 });
 
 const dbToMenuSection = (section: DbSection): MenuSection => ({
@@ -79,11 +93,14 @@ export const useMenuDatabase = () => {
         menu_categories (
           id, section_id, title, icon, display_order,
           menu_items (
-            id, category_id, name, description, price, half_price, full_price, sizes, display_order, image_url
+            id, category_id, name, description, price, half_price, full_price, sizes, display_order, image_url,
+            is_best_seller, is_chef_special, is_new, is_veg, is_spicy, is_premium, is_top_shelf
           )
         )
       `)
       .order("display_order");
+
+    const typedSections: any = sections;
 
     if (error) {
       console.error("Error fetching menu:", error);
@@ -101,7 +118,7 @@ export const useMenuDatabase = () => {
       sides: null,
     };
 
-    sections.forEach((section: DbSection) => {
+    typedSections.forEach((section: DbSection) => {
       sectionMap[section.type] = dbToMenuSection(section);
     });
 
@@ -115,15 +132,15 @@ export const useMenuDatabase = () => {
 
   const seedDatabase = async (priceMap?: Map<string, any>, sourceData?: any) => {
     const sectionsData: { type: MenuSectionType; title: string; display_order: number; data: MenuSection }[] = sourceData ? [
-      { type: 'snacks', title: sourceData.snacksAndStarters?.title || "ARTISAN APPETIZERS", display_order: 0, data: sourceData.snacksAndStarters },
-      { type: 'food', title: sourceData.foodMenu?.title || "GLOBAL MAINS", display_order: 1, data: sourceData.foodMenu },
-      { type: 'beverages', title: sourceData.beveragesMenu?.title || "CRAFT LIBATIONS", display_order: 2, data: sourceData.beveragesMenu },
-      { type: 'sides', title: sourceData.sideItems?.title || "ARTISAN SIDES", display_order: 3, data: sourceData.sideItems },
+      { type: 'snacks' as MenuSectionType, title: sourceData.snacksAndStarters?.title || "ARTISAN APPETIZERS", display_order: 0, data: sourceData.snacksAndStarters },
+      { type: 'food' as MenuSectionType, title: sourceData.foodMenu?.title || "GLOBAL MAINS", display_order: 1, data: sourceData.foodMenu },
+      { type: 'beverages' as MenuSectionType, title: sourceData.beveragesMenu?.title || "CRAFT LIBATIONS", display_order: 2, data: sourceData.beveragesMenu },
+      { type: 'sides' as MenuSectionType, title: sourceData.sideItems?.title || "ARTISAN SIDES", display_order: 3, data: sourceData.sideItems },
     ].filter(s => s.data) : [
-      { type: 'snacks', title: snacksAndStarters.title, display_order: 0, data: snacksAndStarters },
-      { type: 'food', title: foodMenu.title, display_order: 1, data: foodMenu },
-      { type: 'beverages', title: beveragesMenu.title, display_order: 2, data: beveragesMenu },
-      { type: 'sides', title: sideItems.title, display_order: 3, data: sideItems },
+      { type: 'snacks' as MenuSectionType, title: snacksAndStarters.title, display_order: 0, data: snacksAndStarters },
+      { type: 'food' as MenuSectionType, title: foodMenu.title, display_order: 1, data: foodMenu },
+      { type: 'beverages' as MenuSectionType, title: beveragesMenu.title, display_order: 2, data: beveragesMenu },
+      { type: 'sides' as MenuSectionType, title: sideItems.title, display_order: 3, data: sideItems },
     ];
 
     for (const section of sectionsData) {
@@ -172,6 +189,13 @@ export const useMenuDatabase = () => {
             sizes: existing ? existing.sizes : (item.sizes || null),
             display_order: idx,
             image_url: item.image || null,
+            is_best_seller: item.isBestSeller || false,
+            is_chef_special: item.isChefSpecial || false,
+            is_new: item.isNew || false,
+            is_veg: item.isVeg || false,
+            is_spicy: item.isSpicy || false,
+            is_premium: item.isPremium || false,
+            is_top_shelf: item.isTopShelf || false,
           };
         });
 
@@ -194,6 +218,8 @@ export const useMenuDatabase = () => {
     itemIndex: number,
     updatedItem: MenuItem
   ) => {
+    console.log("updateMenuItem called:", { sectionType, categoryIndex, itemIndex, updatedItem });
+
     // Get the section
     const { data: section } = await supabase
       .from("menu_sections")
@@ -201,7 +227,10 @@ export const useMenuDatabase = () => {
       .eq("type", sectionType)
       .single();
 
-    if (!section) return;
+    if (!section) {
+      console.error("Section not found for type:", sectionType);
+      return;
+    }
 
     // Get the category
     const { data: categories } = await supabase
@@ -210,7 +239,10 @@ export const useMenuDatabase = () => {
       .eq("section_id", section.id)
       .order("display_order");
 
-    if (!categories || !categories[categoryIndex]) return;
+    if (!categories || !categories[categoryIndex]) {
+      console.error("Category not found at index:", categoryIndex, categories);
+      return;
+    }
 
     // Get the item
     const { data: items } = await supabase
@@ -219,10 +251,18 @@ export const useMenuDatabase = () => {
       .eq("category_id", categories[categoryIndex].id)
       .order("display_order");
 
-    if (!items || !items[itemIndex]) return;
+    if (!items || !items[itemIndex]) {
+      console.error("Item not found at index:", itemIndex, items);
+      return;
+    }
+
+    console.log("Updating item ID:", items[itemIndex].id, "with payload:", {
+      price: parsePrice(updatedItem.price),
+      full_price: parsePrice(updatedItem.fullPrice),
+    });
 
     // Update the item
-    await supabase
+    const { error } = await supabase
       .from("menu_items")
       .update({
         name: updatedItem.name,
@@ -232,8 +272,21 @@ export const useMenuDatabase = () => {
         full_price: parsePrice(updatedItem.fullPrice),
         sizes: updatedItem.sizes || null,
         image_url: updatedItem.image || null,
+        is_best_seller: updatedItem.isBestSeller || false,
+        is_chef_special: updatedItem.isChefSpecial || false,
+        is_new: updatedItem.isNew || false,
+        is_veg: updatedItem.isVeg || false,
+        is_spicy: updatedItem.isSpicy || false,
+        is_premium: updatedItem.isPremium || false,
+        is_top_shelf: updatedItem.isTopShelf || false,
       })
       .eq("id", items[itemIndex].id);
+
+    if (error) {
+      console.error("Error updating item:", error);
+    } else {
+      console.log("Item updated successfully");
+    }
   };
 
   const checkAndSeed = async () => {
