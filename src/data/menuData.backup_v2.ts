@@ -402,24 +402,5 @@ export const sideItems: MenuSection = {
         { name: "Veg Pulao", price: "₹190", description: "Aromatic rice studded with seasonal vegetables" },
       ],
     },
-    {
-      title: "Indo-Chinese Soups",
-      icon: "🥣",
-      items: [
-        { name: "Cream Of Tomato", price: "₹149", description: "Classic creamy tomato soup" },
-        { name: "Hot And Sour Soup", price: "₹149", description: "Spicy & tangy Indo-Chinese favorite" },
-        { name: "Manchow Soup", price: "₹149", description: "Spicy soup with crispy noodles" },
-        { name: "Sweet Corn Soup", price: "₹149", description: "Mild & comforting corn soup" },
-        { name: "Lemon Coriander Soup", price: "₹149", description: "Fresh coriander with zesty lemon" },
-      ],
-    },
-    {
-      title: "Desserts",
-      icon: "🍨",
-      items: [
-        { name: "Vanilla Ice Cream", price: "₹75", description: "Classic creamy vanilla" },
-        { name: "Vanilla Ice Cream with Chocolate Sauce", price: "₹109", description: "Served with rich hot chocolate sauce" },
-      ],
-    },
   ],
 };

@@ -857,10 +857,9 @@ export const PrintPreview = ({ isOpen, onClose }: PrintPreviewProps) => {
     // Page 3B: INDO-CHINESE & RICE
     {
       section: {
-        title: "ASIAN, RICE & SOUPS",
+        title: "ASIAN & RICE",
         categories: [
           menuData.foodMenu.categories[4],    // Indo-Chinese Favorites
-          menuData.sideItems.categories[3],   // Indo-Chinese Soups
           menuData.sideItems.categories[2]    // Rice
         ]
       },
@@ -936,9 +935,8 @@ export const PrintPreview = ({ isOpen, onClose }: PrintPreviewProps) => {
     // Page 8: REFRESHMENTS
     {
       section: {
-        title: "SWEET ENDINGS & REFRESHMENTS",
+        title: "REFRESHMENTS",
         categories: [
-          menuData.sideItems.categories[4],       // Desserts
           menuData.sideItems.categories[0],       // Water/Soda
           menuData.beveragesMenu.categories[12]   // Soft Drinks
         ]
