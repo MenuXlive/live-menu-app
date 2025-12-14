@@ -841,31 +841,20 @@ export const PrintPreview = ({ isOpen, onClose }: PrintPreviewProps) => {
       variant: "magenta" as const,
       key: "food-mains"
     },
-    // Page 3: VEGETARIAN & BITES
+    // Page 3: VEG MAINS, CHINESE & SIDES
     {
       section: {
-        title: "VEGETARIAN & BITES",
+        title: "VEGETARIAN & SIDES",
         categories: [
           menuData.foodMenu.categories[3],    // Veg Chef's Mains
-          menuData.sideItems.categories[1],   // Bar Bites
-        ]
-      },
-      variant: "magenta" as const,
-      key: "veg-bites",
-      proverb: "Good food is the foundation of genuine happiness."
-    },
-    // Page 3B: INDO-CHINESE & RICE
-    {
-      section: {
-        title: "ASIAN & RICE",
-        categories: [
           menuData.foodMenu.categories[4],    // Indo-Chinese Favorites
+          menuData.sideItems.categories[1],   // Bar Bites
           menuData.sideItems.categories[2]    // Rice
         ]
       },
       variant: "magenta" as const,
-      key: "asian-rice",
-      twoColumn: true
+      key: "veg-sides",
+      proverb: "Good food is the foundation of genuine happiness."
     },
     // Page 4: BEERS & COOLERS
     {
