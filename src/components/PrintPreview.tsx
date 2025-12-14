@@ -76,7 +76,7 @@ const MenuItemRow = ({ item, isEven }: { item: MenuItem; isEven: boolean }) => {
   const hasHalfFull = item.halfPrice && item.fullPrice;
 
   return (
-    <div className={`py-1 px-4 ${isEven ? "bg-white/[0.02]" : ""}`}>
+    <div className={`py-0.5 px-4 ${isEven ? "bg-white/[0.02]" : ""}`}>
       <div className="flex justify-between items-start gap-4">
         <div className="flex-1">
           <div className="flex items-center gap-2 flex-wrap">
@@ -134,7 +134,7 @@ const MenuItemRow = ({ item, isEven }: { item: MenuItem; isEven: boolean }) => {
             )}
           </div>
           {item.description && (
-            <p className="text-[11px] text-gray-300 mt-1 italic leading-loose tracking-wider font-serif opacity-90" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+            <p className="text-[10px] text-gray-400 mt-0.5 italic leading-tight tracking-wide" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
               {item.description}
             </p>
           )}
@@ -143,7 +143,7 @@ const MenuItemRow = ({ item, isEven }: { item: MenuItem; isEven: boolean }) => {
           {hasSizes ? (
             <div className="flex gap-4">
               {item.sizes!.map((size, i) => (
-                <span key={i} className="text-[13px] font-medium text-amber-400 min-w-[50px] text-center">
+                <span key={i} className="text-[14px] font-medium text-amber-400 min-w-[50px] text-center">
                   {size}
                 </span>
               ))}
@@ -152,15 +152,15 @@ const MenuItemRow = ({ item, isEven }: { item: MenuItem; isEven: boolean }) => {
             <div className="flex gap-4 items-center">
               <div className="text-center">
                 <span className="text-[9px] text-gray-500 block uppercase tracking-wider">Half</span>
-                <span className="text-[13px] font-medium text-amber-400">{item.halfPrice}</span>
+                <span className="text-[14px] font-medium text-amber-400">{item.halfPrice}</span>
               </div>
               <div className="text-center">
                 <span className="text-[9px] text-gray-500 block uppercase tracking-wider">Full</span>
-                <span className="text-[13px] font-medium text-amber-400">{item.fullPrice}</span>
+                <span className="text-[14px] font-medium text-amber-400">{item.fullPrice}</span>
               </div>
             </div>
           ) : (
-            <span className="text-[14px] font-semibold text-amber-400">{item.price}</span>
+            <span className="text-[16px] font-semibold text-amber-400">{item.price}</span>
           )}
         </div>
       </div>
@@ -686,6 +686,81 @@ const PrintablePage = ({
         </div>
       </div>
 
+      {/* Decorative Food Illustrations */}
+      {!isCover && !isBackCover && (
+        <div className="absolute bottom-16 left-0 right-0 pointer-events-none opacity-[0.12] overflow-hidden h-24">
+          <svg viewBox="0 0 800 100" className="w-full h-full" style={{ color: accentColor }}>
+            {/* Wine Glass */}
+            <g transform="translate(50, 20)" stroke="currentColor" fill="none" strokeWidth="1.5">
+              <path d="M0,0 Q5,-5 10,0 L10,30 Q10,35 15,35 L25,35 Q30,35 30,30 L30,0 Q35,-5 40,0" />
+              <path d="M20,35 L20,55" />
+              <ellipse cx="20" cy="60" rx="15" ry="5" />
+            </g>
+            {/* Cocktail Glass */}
+            <g transform="translate(120, 15)" stroke="currentColor" fill="none" strokeWidth="1.5">
+              <path d="M0,0 L25,30 L50,0" />
+              <path d="M25,30 L25,55" />
+              <ellipse cx="25" cy="60" rx="12" ry="4" />
+              <circle cx="10" cy="10" r="5" />
+              <path d="M42,5 L55,0" />
+            </g>
+            {/* Shrimp/Prawn */}
+            <g transform="translate(200, 25)" stroke="currentColor" fill="none" strokeWidth="1.5">
+              <path d="M0,30 Q10,0 40,5 Q60,10 70,25 Q65,35 55,40 Q40,42 25,38 Q10,35 0,30" />
+              <path d="M70,25 Q75,22 80,25" />
+              <path d="M70,28 Q75,28 78,30" />
+              <path d="M15,32 Q20,35 25,32" />
+              <path d="M30,35 Q35,38 40,35" />
+            </g>
+            {/* Fish */}
+            <g transform="translate(320, 20)" stroke="currentColor" fill="none" strokeWidth="1.5">
+              <path d="M0,25 Q20,5 50,10 Q80,15 90,25 Q80,35 50,40 Q20,45 0,25" />
+              <circle cx="75" cy="22" r="4" />
+              <path d="M-15,25 L0,15 L0,35 L-15,25" />
+              <path d="M30,20 Q35,25 30,30" />
+              <path d="M45,18 Q50,25 45,32" />
+            </g>
+            {/* Lemon Slice */}
+            <g transform="translate(450, 30)" stroke="currentColor" fill="none" strokeWidth="1.5">
+              <circle cx="20" cy="20" r="20" />
+              <circle cx="20" cy="20" r="15" />
+              <path d="M20,5 L20,35" />
+              <path d="M5,20 L35,20" />
+              <path d="M9,9 L31,31" />
+              <path d="M31,9 L9,31" />
+            </g>
+            {/* Kebab Skewer */}
+            <g transform="translate(530, 10)" stroke="currentColor" fill="none" strokeWidth="1.5">
+              <path d="M5,0 L5,70" />
+              <ellipse cx="5" cy="15" rx="8" ry="6" />
+              <ellipse cx="5" cy="30" rx="10" ry="7" />
+              <ellipse cx="5" cy="45" rx="8" ry="6" />
+              <ellipse cx="5" cy="58" rx="6" ry="5" />
+            </g>
+            {/* Herb/Leaf */}
+            <g transform="translate(580, 25)" stroke="currentColor" fill="none" strokeWidth="1.5">
+              <path d="M20,50 Q20,30 35,15 Q50,0 70,5" />
+              <path d="M30,35 Q40,25 55,20" />
+              <path d="M25,45 Q30,40 40,38" />
+              <path d="M45,28 Q55,22 65,20" />
+            </g>
+            {/* Beer Mug */}
+            <g transform="translate(660, 15)" stroke="currentColor" fill="none" strokeWidth="1.5">
+              <rect x="0" y="10" width="35" height="45" rx="3" />
+              <path d="M35,18 Q50,18 50,35 Q50,48 35,48" />
+              <path d="M5,5 Q10,0 15,5 Q20,8 25,5 Q30,2 35,8" />
+              <path d="M8,20 L8,45" opacity="0.5" />
+              <path d="M15,18 L15,48" opacity="0.5" />
+            </g>
+            {/* Chili */}
+            <g transform="translate(740, 30)" stroke="currentColor" fill="none" strokeWidth="1.5">
+              <path d="M0,20 Q5,0 15,5 Q30,10 35,30 Q38,45 30,50 Q20,55 10,45 Q0,35 0,20" />
+              <path d="M12,5 Q10,-5 15,-8" />
+            </g>
+          </svg>
+        </div>
+      )}
+
       {/* Binary Code Watermark Footer */}
       <div className="absolute bottom-1 left-0 right-0 text-center opacity-20 pointer-events-none">
         <p className="text-[5px] tracking-[1.5em] text-cyan-500 font-mono">
@@ -765,12 +840,13 @@ export const PrintPreview = ({ isOpen, onClose }: PrintPreviewProps) => {
       variant: "magenta" as const,
       key: "food-mains"
     },
-    // Page 3: VEG MAINS & SIDES
+    // Page 3: VEG MAINS, CHINESE & SIDES
     {
       section: {
         title: "VEGETARIAN & SIDES",
         categories: [
           menuData.foodMenu.categories[3],    // Veg Chef's Mains
+          menuData.foodMenu.categories[4],    // Indo-Chinese Favorites
           menuData.sideItems.categories[1],   // Bar Bites
           menuData.sideItems.categories[2]    // Rice
         ]
@@ -1166,7 +1242,7 @@ export const PrintPreview = ({ isOpen, onClose }: PrintPreviewProps) => {
         <!-- Content -->
         <div style="flex: 1; padding-left: 48px; padding-right: 48px; padding-bottom: 24px; overflow: hidden;">
           <div style="max-width: 672px; margin: 0 auto; ${(page as any).twoColumn ? 'display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start;' : ''}">
-          ${page.section.categories.map((category, catIdx) => `
+          ${page.section.categories.filter(c => c && c.items).map((category, catIdx) => `
             <div style="margin-bottom: 32px;">
               <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; padding-bottom: 4px; position: relative;">
                 <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, ${accentColor}88, transparent);"></div>
@@ -1201,7 +1277,7 @@ export const PrintPreview = ({ isOpen, onClose }: PrintPreviewProps) => {
                 ${category.items.map((origItem, idx) => {
         const item = getPromoItem(origItem, overridePercent);
         return `
-                  <div style="padding: 10px 12px; ${idx % 2 === 0 ? "background: rgba(255,255,255,0.02);" : ""}">
+                  <div style="padding: 6px 12px; ${idx % 2 === 0 ? "background: rgba(255,255,255,0.02);" : ""}">
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 16px;">
                       <div style="flex: 1;">
                         <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
@@ -1211,20 +1287,20 @@ export const PrintPreview = ({ isOpen, onClose }: PrintPreviewProps) => {
                           ${item.isPremium ? `<span style="padding: 2px 8px; font-size: 8px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.05em; border-radius: 4px; background: linear-gradient(135deg, #ffd700, #ff8c00); color: #000; box-shadow: 0 0 8px rgba(255,215,0,0.5);">✨ Premium</span>` : ''}
                           ${item.isTopShelf ? `<span style="padding: 2px 8px; font-size: 8px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.05em; border-radius: 4px; background: linear-gradient(135deg, #9333ea, #7c3aed); color: #fff; box-shadow: 0 0 8px rgba(147,51,234,0.5);">🏆 Top Shelf</span>` : ''}
                         </div>
-                        ${item.description ? `<p style="font-size: 10px; color: #d1d5db; margin-top: 4px; font-style: italic; line-height: 1.6; font-family: 'Cormorant Garamond', serif; letter-spacing: 0.03em; opacity: 0.9;">${escapeHtml(item.description)}</p>` : ''}
+                        ${item.description ? `<p style="font-size: 9px; color: #9ca3af; margin-top: 2px; font-style: italic; line-height: 1.3; font-family: 'Cormorant Garamond', serif; letter-spacing: 0.02em;">${escapeHtml(item.description)}</p>` : ''}
                       </div>
                       <div style="flex-shrink: 0; text-align: right;">
                         ${item.sizes ? `
                           <div style="display: flex; gap: 16px; justify-content: flex-end;">
-                            ${item.sizes.map(size => `<span style="font-size: 12px; font-weight: 500; color: #fbbf24; min-width: 40px; text-align: right; width: 50px;">${escapeHtml(size)}</span>`).join("")}
+                            ${item.sizes.map(size => `<span style="font-size: 13px; font-weight: 500; color: #fbbf24; min-width: 40px; text-align: right; width: 50px;">${escapeHtml(size)}</span>`).join("")}
                           </div>
                         ` : item.halfPrice && item.fullPrice ? `
                           <div style="display: flex; gap: 12px; align-items: center; justify-content: flex-end;">
-                            <span style="font-size: 12px; font-weight: 500; color: #fbbf24; min-width: 40px; text-align: right;">${escapeHtml(item.halfPrice)}</span>
-                            <span style="font-size: 12px; font-weight: 500; color: #fbbf24; min-width: 40px; text-align: right;">${escapeHtml(item.fullPrice)}</span>
+                            <span style="font-size: 13px; font-weight: 500; color: #fbbf24; min-width: 40px; text-align: right;">${escapeHtml(item.halfPrice)}</span>
+                            <span style="font-size: 13px; font-weight: 500; color: #fbbf24; min-width: 40px; text-align: right;">${escapeHtml(item.fullPrice)}</span>
                           </div>
                         ` : `
-                          <span style="font-size: 14px; font-weight: 600; color: #fbbf24;">${escapeHtml(item.price)}</span>
+                          <span style="font-size: 16px; font-weight: 600; color: #fbbf24;">${escapeHtml(item.price)}</span>
                         `}
                       </div>
                     </div>
@@ -1239,7 +1315,7 @@ export const PrintPreview = ({ isOpen, onClose }: PrintPreviewProps) => {
         <!-- Proverb -->
         ${(page as any).proverb ? `
         <div style="padding: 0 48px 8px; text-align: center; position: relative; z-index: 10;">
-          <p style="font-size: 14px; font-style: italic; color: #d1d5db; font-family: 'Playfair Display', serif; letter-spacing: 0.02em;">
+          <p style="font-size: 16px; font-style: italic; color: #d1d5db; font-family: 'Dancing Script', cursive; letter-spacing: 0.02em;">
             "${(page as any).proverb}"
           </p>
         </div>
